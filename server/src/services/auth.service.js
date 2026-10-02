@@ -36,12 +36,14 @@ function normalizeEmail(email) {
 }
 
 /** The only user shape ever sent to clients. */
-function sanitizeUser(user) {
+export function sanitizeUser(user) {
   return {
     id: user._id.toString(),
     name: user.name,
     email: user.email,
     role: user.role,
+    image: user.image || null,
+    dateOfBirth: user.dateOfBirth ? user.dateOfBirth.toISOString() : null,
   };
 }
 
@@ -106,7 +108,7 @@ export function logout() {
   return { ok: true };
 }
 
-export async function updateProfile(userId, { name = "", email = "" } = {}) {
+export async function updateProfile(userId, { name = "", email = "", dateOfBirth = null, image = null } = {}) {
   const user = await User.findById(userId);
   if (!user) throw authError("Not authenticated", 401);
 
@@ -116,6 +118,19 @@ export async function updateProfile(userId, { name = "", email = "" } = {}) {
     const existing = await User.findOne({ email: normalizedEmail, _id: { $ne: userId } });
     if (existing) throw authError("An account with this email already exists", 409);
     user.email = normalizedEmail;
+  }
+
+  if (image !== null && image !== undefined && image !== "") {
+    user.image = image.trim();
+  }
+
+  if (dateOfBirth !== null && dateOfBirth !== undefined) {
+    if (dateOfBirth === "") {
+      user.dateOfBirth = null;
+    } else {
+      const d = new Date(dateOfBirth);
+      if (!isNaN(d.getTime())) user.dateOfBirth = d;
+    }
   }
 
   await user.save();

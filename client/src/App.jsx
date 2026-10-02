@@ -5,6 +5,8 @@ import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
+import AdminPage from './pages/AdminPage.jsx'
+import ProductPage from './pages/ProductPage.jsx'
 
 function App() {
   return (
@@ -27,7 +29,9 @@ function App() {
       />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/product/:id" element={<ProductPage />} />
     </Routes>
   )
 }

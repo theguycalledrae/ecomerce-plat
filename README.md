@@ -27,7 +27,7 @@ class0.3/
 cd server
 npm install
 cp .env.example .env   # then fill in real values
-npm run dev            # starts on http://localhost:5000
+npm run dev            # starts on http://localhost:5001
 ```
 
 Health check: `GET http://localhost:5001/api/health`
@@ -38,8 +38,10 @@ Health check: `GET http://localhost:5001/api/health`
 cd client
 npm install
 cp .env.example .env   # defaults already point at the local server
-npm run dev            # starts on http://localhost:5173
+npm run dev            # starts on http://localhost:5500
 ```
+
+Or launch with VS Code ▶ **"Launch Full Stack"** (F5) — starts both servers and opens the browser at the client port.
 
 ## Environment variables
 

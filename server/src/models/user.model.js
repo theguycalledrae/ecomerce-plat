@@ -28,6 +28,31 @@ const userSchema = new mongoose.Schema(
       enum: ["customer", "admin"],
       default: "customer",
     },
+    image: {
+      type: String,
+      trim: true,
+      maxlength: [255, "Image cannot exceed 255 characters"],
+      default: null,
+    },
+    dateOfBirth: {
+      type: Date,
+      validate: {
+        validator: function(v) {
+          if (v === null || v === undefined) return true;
+          if (!(v instanceof Date) || isNaN(v.getTime())) return false;
+          const now = new Date();
+          if (v > now) return false;
+          const minDate = new Date();
+          minDate.setFullYear(now.getFullYear() - 150);
+          if (v < minDate) return false;
+          const minAgeDate = new Date();
+          minAgeDate.setFullYear(now.getFullYear() - 13);
+          if (v > minAgeDate) return false;
+          return true;
+        },
+        message: props => `${props.value} is not a valid date of birth! Must be a past date, at least 13 years ago, and not older than 150 years.`,
+      },
+    },
   },
   { timestamps: true }
 );

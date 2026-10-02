@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth.js";
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
@@ -17,8 +19,9 @@ export default function LoginPage() {
     setBanner("");
     setPending(true);
     try {
-      await login(email, password);
-      navigate("/profile");
+      const user = await login(email, password);
+      if (user.role === "admin") navigate("/admin", { replace: true });
+      else navigate("/products", { replace: true });
     } catch (err) {
       if (err.errors) {
         const byField = {};
@@ -68,9 +71,10 @@ export default function LoginPage() {
           {pending ? "Logging in…" : "Log in"}
         </button>
         <p className="auth-switch">
-          No account? <Link to="/register">Register</Link>
+          No account? <Link to="/register" state={location.state}>Register</Link>
         </p>
       </form>
     </main>
   );
 }
+

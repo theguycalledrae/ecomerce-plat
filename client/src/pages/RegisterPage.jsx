@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth.js";
 
 export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +21,7 @@ export default function RegisterPage() {
     setPending(true);
     try {
       await register(name, email, password);
-      navigate("/profile");
+      navigate(from, { replace: true });
     } catch (err) {
       if (err.errors) {
         const byField = {};
@@ -82,9 +84,10 @@ export default function RegisterPage() {
           {pending ? "Creating account…" : "Create account"}
         </button>
         <p className="auth-switch">
-          Already have an account? <Link to="/login">Log in</Link>
+          Already have an account? <Link to="/login" state={location.state}>Log in</Link>
         </p>
       </form>
     </main>
   );
 }
+

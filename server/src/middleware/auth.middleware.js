@@ -5,6 +5,19 @@ import { getCurrentUser } from "../services/auth.service.js";
  * Express middleware: requires a valid auth cookie AND a live user.
  * Attaches req.user = { id, name, email, role } on success.
  */
+export async function requireAdmin(req, res, next) {
+  try {
+    await requireAuth(req, res, async () => {
+      if (req.user?.role !== "admin") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      next();
+    });
+  } catch {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+}
+
 export async function requireAuth(req, res, next) {
   try {
     const token = req.cookies?.token;

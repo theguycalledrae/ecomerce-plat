@@ -1,13 +1,10 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useState,
 } from "react";
-import { authApi } from "../api/client.js";
-
-const AuthContext = createContext(null);
+import { authApi, uploadApi } from "../api/client.js";
+import { AuthContext } from "./authContext.js";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -35,8 +32,14 @@ export function AuthProvider({ children }) {
     return user;
   }, []);
 
-  const updateProfile = useCallback(async (name, email) => {
-    const { user } = await authApi.updateProfile({ name, email });
+  const updateProfile = useCallback(async ({ name, email, dateOfBirth }) => {
+    const { user } = await authApi.updateProfile({ name, email, dateOfBirth });
+    setUser(user);
+    return user;
+  }, []);
+
+  const uploadImage = useCallback(async (file) => {
+    const { user } = await uploadApi.uploadImage(file);
     setUser(user);
     return user;
   }, []);
@@ -48,14 +51,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, updateProfile, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, updateProfile, uploadImage, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
-  return ctx;
-}
