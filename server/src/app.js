@@ -3,6 +3,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
+import productRoutes from "./routes/product.routes.js";
 import {
   notFoundHandler,
   errorHandler,
@@ -25,6 +27,8 @@ app.use(cookieParser());
 // Routes
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api", uploadRoutes);
 
 // 404 + error handling must run after all routes
 app.use(notFoundHandler);
